@@ -17,6 +17,14 @@ private{  \ {{{
     then  ;
 
 0 value q-head
+0 value print-item-xt
+
+: (print-list)  ( list in-loop? -- )
+    if  r> drop  then
+    ?dup 0<>  if
+        >r  print-item-xt 0<>  if  r@ (car@) print-item-xt execute  else  r@ (car@) . cr  then
+        r> (cdr@) true recurse
+    then  ;
 
 }private  \ }}}
 
@@ -39,6 +47,8 @@ private{  \ {{{
 : q@  ( q: item -- item q: item )  q-head 0= s" q@ underflow" gthrow  q-head car@  ;
 : 2q@  ( q: item1 item2 -- item1 item2 q: item1 item2 )
     q-head 0= s" 2q@ underflow" gthrow  q-head dup cdr@ to q-head q@  swap to q-head q@  ;
+
+: print-list  ( print-item-xt list -- )  swap to print-item-xt false (print-list)  ;
 
 privatize
 
