@@ -26,6 +26,10 @@ private{  \ {{{
         r> (cdr@) true recurse
     then  ;
 
+: (for-each-list-item)  ( xt list in-loop? -- )
+    if  r> drop  then
+    ?dup 0=  if  drop  else  2dup (car@) swap execute  (cdr@) true recurse  then  ;
+
 }private  \ }}}
 
 : cons  ( -- addr )  2 cells allocate s" cons error1" gthrow  ;
@@ -35,7 +39,7 @@ private{  \ {{{
 : cdr@  ( addr -- item )  (cdr@)  ;
 
 : +list  ( item addr -- addr' )  cons dup >r cdr! r@ car! r>  ;
-: list+  ( item addr -- addr' )  cons >r  ?dup  if  r@ swap cdr@  then  r@ car! 0 r@ cdr! r>  ;
+: list+  ( item addr -- addr' )  cons >r  ?dup  if  r@ swap cdr!  then  r@ car! 0 r@ cdr! r>  ;
 
 : free-list  ( free-item-xt list-addr -- )  false (free-list)  ;
 
@@ -49,6 +53,8 @@ private{  \ {{{
     q-head 0= s" 2q@ underflow" gthrow  q-head dup cdr@ to q-head q@  swap to q-head q@  ;
 
 : print-list  ( print-item-xt list -- )  swap to print-item-xt false (print-list)  ;
+
+: for-each-list-item  ( xt list -- )  false (for-each-list-item)  ;
 
 privatize
 
