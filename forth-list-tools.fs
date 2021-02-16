@@ -30,6 +30,9 @@ private{  \ {{{
     if  r> drop  then
     ?dup 0=  if  drop  else  2dup (car@) swap execute  (cdr@) true recurse  then  ;
 
+: (list-length)  ( list count -- count' )
+    dup 0>  if  r> drop  then  over 0=  if  nip  else  1+ swap (cdr@) swap recurse  then  ;
+
 }private  \ }}}
 
 : cons  ( -- addr )  2 cells allocate s" cons error1" gthrow  ;
@@ -40,6 +43,9 @@ private{  \ {{{
 
 : +list  ( item addr -- addr' )  cons dup >r cdr! r@ car! r>  ;
 : list+  ( item addr -- addr' )  cons >r  ?dup  if  r@ swap cdr!  then  r@ car! 0 r@ cdr! r>  ;
+
+: snip-list  ( prev-cons snip-cons -- )  \ snips the cons and frees it
+    >r ?dup 0<>  if  r@ cdr@ swap cdr!  then  r> free s" list-snip error1" gthrow  ;
 
 : free-list  ( free-item-xt list-addr -- )  false (free-list)  ;
 
@@ -55,6 +61,8 @@ private{  \ {{{
 : print-list  ( print-item-xt list -- )  swap to print-item-xt false (print-list)  ;
 
 : for-each-list-item  ( xt list -- )  false (for-each-list-item)  ;
+
+: list-length  ( list -- count )  0 (list-length)  ;
 
 privatize
 
