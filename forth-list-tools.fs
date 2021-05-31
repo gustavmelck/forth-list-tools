@@ -6,6 +6,9 @@ private{  \ {{{
 : gthrow  ( ior addr u -- )
     2 pick  if  type ." ; forth-list-tools error " dup . cr throw  else  2drop drop  then  ;
 
+: (cons)  ( -- addr )  2 cells allocate s" cons error1" gthrow  ;
+: (car!)  ( item addr -- )  postpone !  ;  immediate
+: (cdr!)  ( item addr -- )  postpone cell+  postpone !  ;  immediate
 : (car@)  ( item addr -- )  postpone @  ;  immediate
 : (cdr@)  ( addr -- item )  postpone cell+  postpone @  ;  immediate
 
@@ -33,11 +36,16 @@ private{  \ {{{
 : (list-length)  ( list count -- count' )
     dup 0>  if  r> drop  then  over 0=  if  nip  else  1+ swap (cdr@) swap recurse  then  ;
 
+: (reverse-list)  ( old-list new-list -- list' )
+    dup 0>  if  r> drop  then  over 0=  if  nip  else
+        over (car@) (cons) dup >r (car!) r@ (cdr!)  (cdr@) r> recurse
+    then  ;
+
 }private  \ }}}
 
-: cons  ( -- addr )  2 cells allocate s" cons error1" gthrow  ;
-: car!  ( item addr -- )  !  ;
-: cdr!  ( item addr -- )  cell+ !  ;
+: cons  ( -- addr )  (cons)  ;
+: car!  ( item addr -- )  (car!)  ;
+: cdr!  ( item addr -- )  (cdr!)  ;
 : car@  ( addr -- item )  (car@)  ;
 : cdr@  ( addr -- item )  (cdr@)  ;
 
@@ -63,6 +71,8 @@ private{  \ {{{
 : for-each-list-item  ( xt list -- )  false (for-each-list-item)  ;
 
 : list-length  ( list -- count )  0 (list-length)  ;
+
+: reverse-list  ( list -- list' )  0 (reverse-list)  ;
 
 privatize
 
