@@ -49,6 +49,8 @@ private{  \ {{{
 : car@  ( addr -- item )  (car@)  ;
 : cdr@  ( addr -- item )  (cdr@)  ;
 
+: -cons  ( addr -- )  free s" -cons error" gthrow  ;
+
 : +list  ( item addr -- addr' )  cons dup >r cdr! r@ car! r>  ;
 : list+  ( item addr -- addr' )  cons >r  ?dup  if  r@ swap cdr!  then  r@ car! 0 r@ cdr! r>  ;
 
